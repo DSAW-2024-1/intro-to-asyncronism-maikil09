@@ -1,26 +1,25 @@
-const btnAnterior = document.getElementById('btnAnterior');
-const btnSiguiente = document.getElementById('btnSiguiente');
-
-btnSiguiente.style.display = 'none';
-btnAnterior.style.display = 'none'; 
-
-// Almacena los personajes mostrados
+// Objeto para almacenar los personajes ya mostrados
 const personajesMostrados = {};
 
+// Función para cargar las citas de los personajes
 const cargarCitas = async () => {
     try {
+        // Hacer una solicitud a la API para obtener las citas
         const respuesta = await fetch(`https://thesimpsonsquoteapi.glitch.me/quotes?count=10000`);
 
-        console.log(respuesta);
-
+        // Verificar si la solicitud fue exitosa
         if (respuesta.ok) {
+            // Obtener los datos de la respuesta en formato JSON
             const datos = await respuesta.json();
 
-            let personajesHTML = ''; // Almacena las citas HTML de todos los personajes
+            // Variable para almacenar el HTML de los personajes
+            let personajesHTML = '';
 
+            // Iterar sobre los datos recibidos
             datos.forEach(personaje => {
-                // Verifica si el personaje ya ha sido mostrado antes
+                // Verificar si el personaje ya ha sido mostrado
                 if (!personajesMostrados[personaje.character]) {
+                    // Construir el HTML para mostrar el personaje y su cita
                     personajesHTML += `
                         <div class="personaje">
                             <h3 class="name">${personaje.character}</h3>
@@ -28,16 +27,16 @@ const cargarCitas = async () => {
                             <p class="quote">${personaje.quote}</p>
                         </div>
                     `;
-                    // Marca el personaje como mostrado
+                    // Marcar el personaje como mostrado
                     personajesMostrados[personaje.character] = true;
                 }
             });
 
-            // Muestra todos los personajes al inicio
+            // Insertar el HTML generado en el contenedor correspondiente
             document.getElementById('contenedor').innerHTML = personajesHTML;
 
-            // Actualiza las citas gradualmente cada 5 segundos
-            setInterval(actualizarCitas, 5000);
+            // Iniciar la búsqueda después de cargar las citas
+            iniciarBusqueda();
 
         } else {
             console.log('Hubo un error al cargar los personajes');
@@ -48,43 +47,48 @@ const cargarCitas = async () => {
     }
 }
 
-// Función para cargar nuevas citas y agregarlas a los personajes mostrados
-const actualizarCitas = async () => {
-    try {
-        const respuesta = await fetch(`https://thesimpsonsquoteapi.glitch.me/quotes?count=10000`);
+// Función para iniciar la búsqueda cuando se hace clic en el botón
+const iniciarBusqueda = () => {
+    const btnBuscar = document.getElementById('btnBuscar');
+    btnBuscar.addEventListener('click', () => { 
+        buscarPersonajes(); // Realizar la búsqueda después de cargar las citas
+    });
+}
 
-        console.log(respuesta);
+// Función para buscar personajes y actualizar las citas de todos los personajes
+const buscarPersonajes = () => {
+    // Obtener el texto de búsqueda del input
+    const inputBusqueda = document.getElementById('buscador');
+    const textoBusqueda = inputBusqueda.value.toLowerCase();
 
-        if (respuesta.ok) {
-            const datos = await respuesta.json();
+    // Obtener todos los elementos de personaje
+    const personajes = document.getElementsByClassName('personaje');
+    
+    // Variable para indicar si se encontró al menos un personaje
+    let personajeEncontrado = false;
 
-            datos.forEach(personaje => {
-                // Verifica si el personaje ya ha sido mostrado antes
-                if (!personajesMostrados[personaje.character]) {
-                    const nuevoPersonajeHTML = `
-                        <div class="personaje">
-                            <h3 class="name">${personaje.character}</h3>
-                            <img class="imagen" src="${personaje.image}" alt="${personaje.character}">
-                            <div class"quote">
-                            <p class=>${personaje.quote}</p>
-                            </div>
-                        </div>
-                    `;
-                    // Agrega el nuevo personaje al contenedor gradualmente
-                    document.getElementById('contenedor').innerHTML += nuevoPersonajeHTML;
-                    // Marca el personaje como mostrado
-                    personajesMostrados[personaje.character] = true;
-                }
-            });
-
+    // Iterar sobre los personajes y ocultar/mostrar según la búsqueda
+    for (let personaje of personajes) {
+        const nombrePersonaje = personaje.querySelector('.name').textContent.toLowerCase();
+        const citaPersonaje = personaje.querySelector('.quote').textContent.toLowerCase();
+        if (nombrePersonaje.includes(textoBusqueda) || citaPersonaje.includes(textoBusqueda)) {
+            personaje.style.display = 'block'; // Mostrar el personaje si coincide con la búsqueda
+            personajeEncontrado = true;
         } else {
-            console.log('Hubo un error al cargar los personajes');
+            personaje.style.display = 'none'; // Ocultar el personaje si no coincide con la búsqueda
         }
+    }
 
-    } catch (error) {
-        console.log('Hubo un error al cargar los personajes:', error);
+    // Mostrar un mensaje si no se encontraron personajes
+    if (!personajeEncontrado) {
+        alert('El personaje no está en la lista.');
+        inputBusqueda.value = ''; // Limpiar el campo de búsqueda
+        // Mostrar todos los personajes nuevamente
+        for (let personaje of personajes) {
+            personaje.style.display = 'block';
+        }
     }
 }
 
-// Inicia la carga de citas
+// Cargar las citas de los personajes al inicio
 cargarCitas();
