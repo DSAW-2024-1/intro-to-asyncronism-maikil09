@@ -21,7 +21,7 @@ const cargarCitas = async () => {
                 if (!personajesMostrados[personaje.character]) {
                     // Construir el HTML para mostrar el personaje y su cita
                     personajesHTML += `
-                        <div class="personaje">
+                        <div class="personaje" onclick="traerFrase('${personaje.character}')">
                             <h3 class="name">${personaje.character}</h3>
                             <img class="imagen" src="${personaje.image}" alt="${personaje.character}">
                             <p class="quote">${personaje.quote}</p>
@@ -47,11 +47,35 @@ const cargarCitas = async () => {
     }
 }
 
+// Función para traer una frase distinta del mismo personaje
+const traerFrase = async (personaje) => {
+    try {
+        // Hacer una solicitud a la API para obtener una cita del personaje
+        const respuesta = await fetch(`https://thesimpsonsquoteapi.glitch.me/quotes?count=10&character=${encodeURIComponent(personaje)}`);
+
+        // Verificar si la solicitud fue exitosa
+        if (respuesta.ok) {
+            // Obtener los datos de la respuesta en formato JSON
+            const datos = await respuesta.json();
+
+            // Actualizar la cita del personaje en la página
+            const personajeElemento = document.querySelector(`.personaje h3.name:contains('${personaje}')`).parentNode;
+            personajeElemento.querySelector('.quote').textContent = datos[0].quote;
+
+        } else {
+            console.log('Hubo un error al cargar la cita del personaje', personaje);
+        }
+
+    } catch (error) {
+        console.log('Hubo un error al cargar la cita del personaje', personaje, ':', error);
+    }
+}
+
 // Función para iniciar la búsqueda cuando se hace clic en el botón
 const iniciarBusqueda = () => {
     const btnBuscar = document.getElementById('btnBuscar');
     btnBuscar.addEventListener('click', () => { 
-        buscarPersonajes(); // Realizar la búsqueda después de cargar las citas
+        buscarPersonajes(); 
     });
 
     // Agregar evento al botón de personaje aleatorio
