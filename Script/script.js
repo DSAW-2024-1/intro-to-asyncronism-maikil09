@@ -1,25 +1,13 @@
-// Objeto para almacenar los personajes ya mostrados
 const personajesMostrados = {};
 
-// Función para cargar las citas de los personajes
 const cargarCitas = async () => {
     try {
-        // Hacer una solicitud a la API para obtener las citas
         const respuesta = await fetch(`https://thesimpsonsquoteapi.glitch.me/quotes?count=10000`);
-
-        // Verificar si la solicitud fue exitosa
         if (respuesta.ok) {
-            // Obtener los datos de la respuesta en formato JSON
             const datos = await respuesta.json();
-
-            // Variable para almacenar el HTML de los personajes
             let personajesHTML = '';
-
-            // Iterar sobre los datos recibidos
             datos.forEach(personaje => {
-                // Verificar si el personaje ya ha sido mostrado
                 if (!personajesMostrados[personaje.character]) {
-                    // Construir el HTML para mostrar el personaje y su cita
                     personajesHTML += `
                         <div class="personaje">
                             <h3 class="name">${personaje.character}</h3>
@@ -27,68 +15,61 @@ const cargarCitas = async () => {
                             <p class="quote">${personaje.quote}</p>
                         </div>
                     `;
-                    // Marcar el personaje como mostrado
                     personajesMostrados[personaje.character] = true;
                 }
             });
-
-            // Insertar el HTML generado en el contenedor correspondiente
             document.getElementById('contenedor').innerHTML = personajesHTML;
-
-            // Iniciar la búsqueda después de cargar las citas
             iniciarBusqueda();
-
         } else {
             console.log('Hubo un error al cargar los personajes');
         }
-
     } catch (error) {
         console.log('Hubo un error al cargar los personajes:', error);
     }
 }
 
-// Función para iniciar la búsqueda cuando se hace clic en el botón
 const iniciarBusqueda = () => {
     const btnBuscar = document.getElementById('btnBuscar');
     btnBuscar.addEventListener('click', () => { 
-        buscarPersonajes(); // Realizar la búsqueda después de cargar las citas
+        buscarPersonajes(); 
+    });
+    const btnAleatorio = document.getElementById('btnAleatorio');
+    btnAleatorio.addEventListener('click', () => {
+        mostrarPersonajeAleatorio();
     });
 }
 
-// Función para buscar personajes y actualizar las citas de todos los personajes
 const buscarPersonajes = () => {
-    // Obtener el texto de búsqueda del input
     const inputBusqueda = document.getElementById('buscador');
     const textoBusqueda = inputBusqueda.value.toLowerCase();
-
-    // Obtener todos los elementos de personaje
     const personajes = document.getElementsByClassName('personaje');
-    
-    // Variable para indicar si se encontró al menos un personaje
     let personajeEncontrado = false;
-
-    // Iterar sobre los personajes y ocultar/mostrar según la búsqueda
     for (let personaje of personajes) {
         const nombrePersonaje = personaje.querySelector('.name').textContent.toLowerCase();
         const citaPersonaje = personaje.querySelector('.quote').textContent.toLowerCase();
         if (nombrePersonaje.includes(textoBusqueda) || citaPersonaje.includes(textoBusqueda)) {
-            personaje.style.display = 'block'; // Mostrar el personaje si coincide con la búsqueda
+            personaje.style.display = 'block'; 
             personajeEncontrado = true;
         } else {
-            personaje.style.display = 'none'; // Ocultar el personaje si no coincide con la búsqueda
+            personaje.style.display = 'none'; 
         }
     }
-
-    // Mostrar un mensaje si no se encontraron personajes
     if (!personajeEncontrado) {
         alert('El personaje no está en la lista.');
-        inputBusqueda.value = ''; // Limpiar el campo de búsqueda
-        // Mostrar todos los personajes nuevamente
+        inputBusqueda.value = '';
         for (let personaje of personajes) {
             personaje.style.display = 'block';
         }
     }
 }
 
-// Cargar las citas de los personajes al inicio
+const mostrarPersonajeAleatorio = () => {
+    const personajes = document.querySelectorAll('.personaje');
+    const indiceAleatorio = Math.floor(Math.random() * personajes.length);
+    personajes.forEach(personaje => {
+        personaje.style.display = 'none';
+    });
+    personajes[indiceAleatorio].style.display = 'block';
+}
+
 cargarCitas();
