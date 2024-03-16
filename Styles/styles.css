@@ -1,0 +1,86 @@
+@import url('https://fonts.googleapis.com/css2?family=Rock+Salt&display=swap');
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+    
+}
+body{
+    background-image: url('/intro-to-asyncronism-maikil09/Images/font.png'); 
+    background-size: cover;
+    font-family: "Rock Salt", cursive;
+    display: flex;
+    justify-content: center;
+}
+
+.fondo {
+    width: 70%;
+    height:fit-content;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.8); 
+    border-radius: 10px;
+    text-align: center; 
+}
+.title img{
+    width: 300px;
+    height: auto;
+}
+.contenedor {
+	width: 90%;
+	max-width: 1000px;
+	margin: 40px auto 100px auto;
+
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 40px;
+}
+.buscar{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #edeef0;
+    border-radius: 100px;
+    border:0.1px #9c5b01 solid ;
+}
+.input_buscador{
+    flex: 1;
+    padding: 1px 20px;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-weight: 8px;
+}
+
+.paginacion {
+    position: fixed;
+    bottom: 0;
+    background: rgba(16, 10, 31, 0.9); 
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    padding: 10px;
+}
+
+.paginacion button {
+    font-family: "Rock Salt", cursive;
+	cursor: pointer;
+	border: none;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	height: 37.5px;
+	width: 150px;
+	background: 	#9c5b01;
+	color: black;
+	border-radius: 75px;
+	font-weight: 450;
+	transition: .3s ease all;
+}
+
+.paginacion button:hover {
+	background: #f8db27;
+}
